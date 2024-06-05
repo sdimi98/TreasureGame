@@ -37,24 +37,29 @@ async function Start() {
     handleSprite.position.set(doorSprite.position.x - 27, doorSprite.position.y - 5);
     app.stage.addChild(handleSprite);
 
-    // leftArrowSprite
-    let leftArrowSprite = await createSprite('./assets/arrowLeft.png', 0.5, 0.5, 0.31);
-    leftArrowSprite.position.set(doorSprite.position.x - 150, doorSprite.position.y - 150);
-    leftArrowSprite.alpha = 0.5;
-    leftArrowSprite.interactive = true;
-    leftArrowSprite.cursor = 'pointer';
-    leftArrowSprite.on('pointerdown', () => rotateHandle('left'));
-    app.stage.addChild(leftArrowSprite);
 
-    // rightArrowSprite
-    let rightArrowSprite = await createSprite('./assets/arrowRight.png', 0.5, 0.5, 0.31);
-    rightArrowSprite.position.set(doorSprite.position.x + 95, doorSprite.position.y - 150);
-    rightArrowSprite.alpha = 0.5;
-    rightArrowSprite.interactive = true;
-    rightArrowSprite.cursor = 'pointer';
-    rightArrowSprite.on('pointerdown', () => rotateHandle('right'));
-    app.stage.addChild(rightArrowSprite);
+    //leftRect
+    const leftRect = new PIXI.Graphics();
+    leftRect.fill({color: 0x000000, alpha: 0});
+    leftRect.rect(0, 0, app.renderer.width / 2, app.renderer.height);
+    leftRect.position.set(-100, 0)
+    leftRect.fill();
+    leftRect.interactive = true;
+    leftRect.on('pointerdown', () => rotateHandle('left'));
+    app.stage.addChild(leftRect);
 
+    //rightRect
+    const rightRect = new PIXI.Graphics();
+    rightRect.fill({color: 0x000000, alpha: 0});
+    rightRect.rect(0, 0, app.renderer.width / 2, app.renderer.height);
+    rightRect.position.set(bgSprite.x + 90, 0)
+    rightRect.fill();
+    rightRect.interactive = true;
+    rightRect.on('pointerdown', () => rotateHandle('right'));
+    app.stage.addChild(rightRect);
+
+
+    //functions
     function rotateHandle(direction) {
         if (direction === 'left') {
             gsap.to(handleSprite, {

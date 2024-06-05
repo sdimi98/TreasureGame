@@ -1,3 +1,5 @@
+import {createSprite} from './helpers.js'
+
 Start();
 
 async function Start() {
@@ -12,40 +14,26 @@ async function Start() {
     document.body.appendChild(app.canvas);
 
     //Background
-    await PIXI.Assets.load('./assets/bg.png');
-    let bgSprite = PIXI.Sprite.from('./assets/bg.png');
-    bgSprite.height = window.innerHeight;
+    let bgSprite = await createSprite('./assets/bg.png', 0.5, 0.5, 1);
     bgSprite.width = window.innerWidth;
+    bgSprite.height = window.innerHeight;
+    bgSprite.position.set(app.renderer.width / 2, app.renderer.height / 2);
     app.stage.addChild(bgSprite);
-    app.renderer.view.canvas.style.position = 'absolute';
 
     //Door
-    await PIXI.Assets.load('./assets/door.png');
-    let doorSprite = PIXI.Sprite.from('./assets/door.png');
-    doorSprite.scale.set(0.31,0.31);
-    doorSprite.anchor.set(0.5, 0.5)
-    doorSprite.position.x = app.renderer.width / 2 + 18;
-    doorSprite.position.y = app.renderer.height / 2 - 12;
+    let doorSprite = await createSprite('./assets/door.png', 0.5, 0.5, 0.31);
+    doorSprite.position.set(app.renderer.width / 2 + 18, app.renderer.height / 2 - 12);
     app.stage.addChild(doorSprite);
-    app.renderer.view.canvas.style.position = 'absolute';
 
     //Handle Shadow
-    await PIXI.Assets.load('./assets/handleShadow.png');
-    let handleShadowSprite = PIXI.Sprite.from('./assets/handleShadow.png');
-    handleShadowSprite.anchor.set(0.5, 0.5)
-    handleShadowSprite.scale.set(0.31,0.31);
-    handleShadowSprite.position.x = doorSprite.position.x - 22;
-    handleShadowSprite.position.y = doorSprite.position.y + 6;
+    let handleShadowSprite = await createSprite('./assets/handleShadow.png', 0.5, 0.5, 0.31);
+    handleShadowSprite.position.set(doorSprite.position.x - 22, doorSprite.position.y + 6);
     app.stage.addChild(handleShadowSprite);
-    app.renderer.view.canvas.style.position = 'absolute';
+
 
     //Handle
-    await PIXI.Assets.load('./assets/handle.png');
-    let handleSprite = PIXI.Sprite.from('./assets/handle.png');
-    handleSprite.anchor.set(0.5, 0.5)
-    handleSprite.scale.set(0.31,0.31);
-    handleSprite.position.x = doorSprite.position.x - 27;
-    handleSprite.position.y = doorSprite.position.y - 5;
+    let handleSprite = await createSprite('./assets/handle.png', 0.5, 0.5, 0.31);
+    handleSprite.position.set(doorSprite.position.x - 27, doorSprite.position.y - 5);
     app.stage.addChild(handleSprite);
     app.renderer.view.canvas.style.position = 'absolute';
 

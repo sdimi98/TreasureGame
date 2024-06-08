@@ -24,16 +24,28 @@ async function Start() {
     bgSprite.position.set(app.renderer.width / 2, app.renderer.height / 2);
     app.stage.addChild(bgSprite);
 
-    //Door
+
+    //doorSprite
     let doorSprite = await createSprite('./assets/door.png', window.innerWidth, window.innerHeight);
-    doorSprite.position.set(app.renderer.width / 2 + 18, app.renderer.height / 2 - 12);
-    doorSprite.setSize(doorSprite.width * 0.6, doorSprite.height * 0.6)
+    doorSprite.position.set(app.renderer.width / 2 * 1.01, app.renderer.height / 2 * 0.96);
+    doorSprite.setSize(doorSprite.width * 0.6, doorSprite.height * 0.6);
     app.stage.addChild(doorSprite);
+
+    //doorOpenShadow
+    let doorShadowSprite = await createSprite('./assets/doorOpenShadow.png', window.innerWidth, window.innerHeight);
+    doorShadowSprite.position.set(app.renderer.width / 2 * 1.492, app.renderer.height / 2 * 0.988);
+    doorShadowSprite.setSize(doorShadowSprite.width * 0.6, doorShadowSprite.height * 0.6);
+    app.stage.addChild(doorShadowSprite);
+
+    //doorOpen
+    let doorOpenSprite = await createSprite('./assets/doorOpen.png', window.innerWidth, window.innerHeight);
+    doorOpenSprite.position.set(app.renderer.width / 2 * 1.46, app.renderer.height / 2 * 0.966);
+    doorOpenSprite.setSize(doorOpenSprite.width * 0.6, doorOpenSprite.height * 0.6);
+    app.stage.addChild(doorOpenSprite);
+
 
     //handleShadow
     let handleShadowSprite = await createSprite('./assets/handleShadow.png', window.innerWidth, window.innerHeight);
-    const scaleFactor = Math.min(window.width / handleShadowSprite.texture.width, window.height / handleShadowSprite.texture.height);
-
     handleShadowSprite.position.set((doorSprite.position.x * 0.977), (doorSprite.position.y * 1.01));
     handleShadowSprite.setSize(handleShadowSprite.width * 0.24, handleShadowSprite.height * 0.24)
     app.stage.addChild(handleShadowSprite);

@@ -1,7 +1,11 @@
-export async function createSprite(imagePath, anchorX = 0.5, anchorY = 0.5, scale = 1) {
+export async function createSprite(imagePath, width, height) {
     await PIXI.Assets.load(imagePath);
     let sprite = PIXI.Sprite.from(imagePath);
-    sprite.anchor.set(anchorX, anchorY);
-    sprite.scale.set(scale);
+    sprite.anchor.set( 0.5,  0.5);
+    sprite.width = width;
+    sprite.height = height;
+    const scaleFactor = Math.min(width / sprite.texture.width, height / sprite.texture.height);
+    sprite.width = sprite.texture.width * scaleFactor;
+    sprite.height = sprite.texture.height * scaleFactor;
     return sprite;
 }

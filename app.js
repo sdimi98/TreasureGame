@@ -9,7 +9,7 @@ async function Start() {
     await app.init({
         transparent: false,
         antialias: true,
-        // resizeTo: window
+        resizeTo: window
     });
     app.renderer.resize(window.innerWidth, window.innerHeight);
 
@@ -20,35 +20,35 @@ async function Start() {
     let step = 0;
 
     //Background
-    let bgSprite = await createSprite('./assets/bg.png', 0.5, 0.5, 1);
-    bgSprite.width = window.innerWidth;
-    bgSprite.height = window.innerHeight;
+    let bgSprite = await createSprite('./assets/bg.png', window.innerWidth, window.innerHeight);
     bgSprite.position.set(app.renderer.width / 2, app.renderer.height / 2);
     app.stage.addChild(bgSprite);
 
     //Door
-    let doorSprite = await createSprite('./assets/door.png', 0.5, 0.5, 0.31);
+    let doorSprite = await createSprite('./assets/door.png', window.innerWidth, window.innerHeight);
     doorSprite.position.set(app.renderer.width / 2 + 18, app.renderer.height / 2 - 12);
+    doorSprite.setSize(doorSprite.width * 0.6, doorSprite.height * 0.6)
     app.stage.addChild(doorSprite);
 
-
     //handleShadow
-    let handleShadowSprite = await createSprite('./assets/handleShadow.png', 0.5, 0.5, 0.31);
-    handleShadowSprite.position.set(doorSprite.position.x - 22, doorSprite.position.y + 6);
+    let handleShadowSprite = await createSprite('./assets/handleShadow.png', window.innerWidth, window.innerHeight);
+    const scaleFactor = Math.min(window.width / handleShadowSprite.texture.width, window.height / handleShadowSprite.texture.height);
+
+    handleShadowSprite.position.set((doorSprite.position.x * 0.977), (doorSprite.position.y * 1.01));
+    handleShadowSprite.setSize(handleShadowSprite.width * 0.24, handleShadowSprite.height * 0.24)
     app.stage.addChild(handleShadowSprite);
 
-
     //handleSprite
-    let handleSprite = await createSprite('./assets/handle.png', 0.5, 0.5, 0.31);
-    handleSprite.position.set(doorSprite.position.x - 27, doorSprite.position.y - 5);
+    let handleSprite = await createSprite('./assets/handle.png', window.innerWidth, window.innerHeight);
+    handleSprite.position.set(doorSprite.position.x * 0.97, doorSprite.position.y * 0.989);
+    handleSprite.setSize(handleSprite.width * 0.24, handleSprite.height * 0.24)
     app.stage.addChild(handleSprite);
-
 
     //leftRect
     const leftRect = new PIXI.Graphics();
     leftRect.fill({color: 0x000000, alpha: 0});
     leftRect.rect(0, 0, app.renderer.width / 2, app.renderer.height);
-    leftRect.position.set(-100, 0)
+    leftRect.position.set(0, 0)
     leftRect.fill();
     leftRect.interactive = true;
     leftRect.on('pointerdown', () => rotateHandle('left'));
@@ -56,9 +56,9 @@ async function Start() {
 
     //rightRect
     const rightRect = new PIXI.Graphics();
-    rightRect.fill({color: 0x000000, alpha: 0});
+    rightRect.fill({color: 0x900000, alpha: 0});
     rightRect.rect(0, 0, app.renderer.width / 2, app.renderer.height);
-    rightRect.position.set(bgSprite.x + 90, 0)
+    rightRect.position.set(bgSprite.x, 0)
     rightRect.fill();
     rightRect.interactive = true;
     rightRect.on('pointerdown', () => rotateHandle('right'));
@@ -89,7 +89,7 @@ async function Start() {
     function rotateHandle(direction) {
 
 
-        if (direction === 'left' && secretCode[step+1]==='counterclockwise') {
+        if (direction === 'left' && secretCode[step + 1] === 'counterclockwise') {
             counterclockwiseRotations++;
             gsap.to(handleSprite, {
                 duration: 0.5,
@@ -99,7 +99,7 @@ async function Start() {
                 duration: 0.5,
                 rotation: handleShadowSprite.rotation - 1.0472
             });
-        } else if (direction === 'right' && secretCode[step+1]==='clockwise') {
+        } else if (direction === 'right' && secretCode[step + 1] === 'clockwise') {
             clockwiseRotations++;
             gsap.to(handleSprite, {
                 duration: 0.5,

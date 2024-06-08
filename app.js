@@ -35,12 +35,14 @@ async function Start() {
     let doorShadowSprite = await createSprite('./assets/doorOpenShadow.png', window.innerWidth, window.innerHeight);
     doorShadowSprite.position.set(app.renderer.width / 2 * 1.492, app.renderer.height / 2 * 0.988);
     doorShadowSprite.setSize(doorShadowSprite.width * 0.6, doorShadowSprite.height * 0.6);
+    doorShadowSprite.alpha=0;
     app.stage.addChild(doorShadowSprite);
 
     //doorOpen
     let doorOpenSprite = await createSprite('./assets/doorOpen.png', window.innerWidth, window.innerHeight);
     doorOpenSprite.position.set(app.renderer.width / 2 * 1.46, app.renderer.height / 2 * 0.966);
     doorOpenSprite.setSize(doorOpenSprite.width * 0.6, doorOpenSprite.height * 0.6);
+    doorOpenSprite.alpha=0;
     app.stage.addChild(doorOpenSprite);
 
 
@@ -53,7 +55,7 @@ async function Start() {
     //handleSprite
     let handleSprite = await createSprite('./assets/handle.png', window.innerWidth, window.innerHeight);
     handleSprite.position.set(doorSprite.position.x * 0.97, doorSprite.position.y * 0.989);
-    handleSprite.setSize(handleSprite.width * 0.24, handleSprite.height * 0.24)
+    handleSprite.setSize(handleSprite.width * 0.24, handleSprite.height * 0.24);
     app.stage.addChild(handleSprite);
 
     //leftRect
@@ -105,7 +107,7 @@ async function Start() {
             counterclockwiseRotations++;
             gsap.to(handleSprite, {
                 duration: 0.5,
-                rotation: handleSprite.rotation - 1.0472
+                rotation: handleSprite.rotation - 1.0472,
             });
             gsap.to(handleShadowSprite, {
                 duration: 0.5,
@@ -121,22 +123,54 @@ async function Start() {
                 duration: 0.5,
                 rotation: handleShadowSprite.rotation + 1.0472
             });
-        } else console.log('owie :(')
+        } else {
+            clockwiseRotations=0;
+            counterclockwiseRotations=0;
+            step=0;
+            gsap.to(handleSprite, {
+                yoyo:true,
+                duration: 1,
+                rotation: 15,
+                onComplete: ()=>{
+                    handleSprite.rotation=0;
+                }
+            });
+            gsap.to(handleShadowSprite, {
+                yoyo:true,
+                duration: 1,
+                rotation: 15,
+                onComplete: ()=>{
+                    handleShadowSprite.rotation=0;
+                }
+            });
+            console.log('owie :(');
+        }
 
 
         if (clockwiseRotations === secretCode[step]) {
-            console.log('nice')
+            console.log('nice');
+
             step++;
             step++;
+            console.log(step);
             clockwiseRotations = 0;
         }
         if (counterclockwiseRotations === secretCode[step]) {
-            console.log('nice')
+            console.log('nice');
             step++;
             step++;
+            console.log(step);
             counterclockwiseRotations = 0;
         }
+        if (step === 6){
+            app.stage.removeChild(doorSprite);
+            app.stage.removeChild(handleSprite);
+            app.stage.removeChild(handleShadowSprite);
+            doorOpenSprite.alpha=1;
+            doorShadowSprite.alpha=1;
+        }
     }
+
 
     app.renderer.view.canvas.style.position = 'absolute';
 

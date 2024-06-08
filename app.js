@@ -8,10 +8,16 @@ async function Start() {
     const app = new PIXI.Application();
     await app.init({
         transparent: false,
-        antialias: true
+        antialias: true,
+        // resizeTo: window
     });
     app.renderer.resize(window.innerWidth, window.innerHeight);
+
     document.body.appendChild(app.canvas);
+    let secretCode = generateSecretCode();
+    let clockwiseRotations = 0;
+    let counterclockwiseRotations = 0;
+    let step = 0;
 
     //Background
     let bgSprite = await createSprite('./assets/bg.png', 0.5, 0.5, 1);
@@ -58,10 +64,33 @@ async function Start() {
     rightRect.on('pointerdown', () => rotateHandle('right'));
     app.stage.addChild(rightRect);
 
-
     //functions
+
+    function generateSecretCode() {
+        let combination = [];
+        for (let i = 0; i < 3; i++) {
+            const randomNumber = Math.ceil(Math.random() * 9)
+            let directionInt = Math.ceil(Math.random() * 2);
+            let direction;
+            combination.push(randomNumber);
+            if (directionInt === 1) {
+                direction = 'clockwise';
+                combination.push(direction);
+            } else if (directionInt === 2) {
+                direction = 'counterclockwise';
+                combination.push(direction);
+            }
+            console.log(`#${i + 1}: ${randomNumber} ${direction}`)
+        }
+        return combination;
+    }
+
+
     function rotateHandle(direction) {
-        if (direction === 'left') {
+
+
+        if (direction === 'left' && secretCode[step+1]==='counterclockwise') {
+            counterclockwiseRotations++;
             gsap.to(handleSprite, {
                 duration: 0.5,
                 rotation: handleSprite.rotation - 1.0472
@@ -70,7 +99,8 @@ async function Start() {
                 duration: 0.5,
                 rotation: handleShadowSprite.rotation - 1.0472
             });
-        } else if (direction === 'right') {
+        } else if (direction === 'right' && secretCode[step+1]==='clockwise') {
+            clockwiseRotations++;
             gsap.to(handleSprite, {
                 duration: 0.5,
                 rotation: handleSprite.rotation + 1.0472
@@ -79,6 +109,20 @@ async function Start() {
                 duration: 0.5,
                 rotation: handleShadowSprite.rotation + 1.0472
             });
+        } else console.log('owie :(')
+
+
+        if (clockwiseRotations === secretCode[step]) {
+            console.log('nice')
+            step++;
+            step++;
+            clockwiseRotations = 0;
+        }
+        if (counterclockwiseRotations === secretCode[step]) {
+            console.log('nice')
+            step++;
+            step++;
+            counterclockwiseRotations = 0;
         }
     }
 

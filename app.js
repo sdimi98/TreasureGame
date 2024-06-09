@@ -15,7 +15,6 @@ async function Start() {
 
     document.body.appendChild(app.canvas);
 
-
     let secretCode = generateSecretCode();
 
     let clockwiseRotations = 0;
@@ -24,7 +23,7 @@ async function Start() {
     const ticker = new PIXI.Ticker();
 
     /** Sprites **/
-        //Background
+    //Background
     let bgSprite = await createSprite('./assets/bg.png', window.innerWidth, window.innerHeight);
     bgSprite.position.set(app.renderer.width / 2, app.renderer.height / 2);
     app.stage.addChild(bgSprite);
@@ -84,9 +83,9 @@ async function Start() {
 
     //leftRect
     const leftRect = new PIXI.Graphics();
-    leftRect.fill({color: 0xFF0000, alpha: 0});
-    leftRect.rect(0, 0, app.renderer.width / 2, app.renderer.height);
-    leftRect.position.set(0, 0)
+    leftRect.fill({color: 0xFF0000, alpha: 0})
+    .rect(0, 0, app.renderer.width / 2, app.renderer.height)
+    .position.set(0, 0);
     leftRect.fill();
     leftRect.interactive = true;
     leftRect.on('pointerdown', () => rotateHandle('left'));
@@ -94,9 +93,9 @@ async function Start() {
 
     //rightRect
     const rightRect = new PIXI.Graphics();
-    rightRect.fill({color: 0xFF0000, alpha: 0});
-    rightRect.rect(0, 0, app.renderer.width / 2, app.renderer.height);
-    rightRect.position.set(bgSprite.x, 0)
+    rightRect.fill({color: 0xFF0000, alpha: 0})
+    .rect(0, 0, app.renderer.width / 2, app.renderer.height)
+    .position.set(bgSprite.x, 0);
     rightRect.fill();
     rightRect.interactive = true;
     rightRect.on('pointerdown', () => rotateHandle('right'));
@@ -145,97 +144,117 @@ async function Start() {
 
     function rotateHandle(direction) {
 
-
         if (direction === 'left' && secretCode[step + 1] === 'counterclockwise') {
-            counterclockwiseRotations++;
-            gsap.to(handleSprite, {
-                duration: 0.5,
-                rotation: handleSprite.rotation - 1.0472,
-            });
-            gsap.to(handleShadowSprite, {
-                duration: 0.5,
-                rotation: handleShadowSprite.rotation - 1.0472
-            });
+            handleLeftRotation();
         } else if (direction === 'right' && secretCode[step + 1] === 'clockwise') {
-            clockwiseRotations++;
-            gsap.to(handleSprite, {
-                duration: 0.5,
-                rotation: handleSprite.rotation + 1.0472
-            });
-            gsap.to(handleShadowSprite, {
-                duration: 0.5,
-                rotation: handleShadowSprite.rotation + 1.0472
-            });
+            handleRightRotation();
         } else {
-            clockwiseRotations = 0;
-            counterclockwiseRotations = 0;
-            step = 0;
-            gsap.to(handleSprite, {
-                yoyo: true,
-                duration: 1,
-                rotation: 15,
-                onComplete: () => {
-                    handleSprite.rotation = 0;
-                }
-            });
-            gsap.to(handleShadowSprite, {
-                yoyo: true,
-                duration: 1,
-                rotation: 15,
-                onComplete: () => {
-                    handleShadowSprite.rotation = 0;
-                }
-            });
+            handleIncorrectCombination();
         }
-
-
         if (clockwiseRotations === secretCode[step]) {
-            step++;
-            step++;
-            clockwiseRotations = 0;
+            advanceClockwiseStep();
         }
         if (counterclockwiseRotations === secretCode[step]) {
-            step++;
-            step++;
-            counterclockwiseRotations = 0;
+            advanceCounterClockwiseStep();
         }
         if (step === 6) {
-            console.log('💲💲💲💲💲')
-            gsap.to(blinkSpriteOne, {
-                yoyo: true,
-                startAt: {alpha: 0.8},
-                alpha: 1,
-                repeat: -1,
-                ease: "power1.inOut",
-                duration: 0.85
-
-            });
-            gsap.to(blinkSpriteTwo, {
-                yoyo: true,
-                startAt: {alpha: 0.8},
-                alpha: 1,
-                repeat: -1,
-                ease: "power1.inOut",
-                duration: 0.85
-
-            });
-            gsap.to(blinkSpriteThree, {
-                yoyo: true,
-                startAt: {alpha: 0.8},
-                alpha: 1,
-                repeat: -1,
-                ease: "power1.inOut",
-                duration: 0.85
-
-            });
-            app.stage.removeChild(doorSprite);
-            app.stage.removeChild(handleSprite);
-            app.stage.removeChild(handleShadowSprite);
-            doorOpenSprite.alpha = 1;
-            doorShadowSprite.alpha = 1;
-            style.fill = 'green'
-            ticker.stop();
+            openDoor();
         }
+    }
+
+    function handleLeftRotation(){
+
+        counterclockwiseRotations++;
+        gsap.to(handleSprite, {
+            duration: 0.5,
+            rotation: handleSprite.rotation - 1.0472,
+        });
+        gsap.to(handleShadowSprite, {
+            duration: 0.5,
+            rotation: handleShadowSprite.rotation - 1.0472
+        });
+    }
+    function handleRightRotation(){
+        clockwiseRotations++;
+        gsap.to(handleSprite, {
+            duration: 0.5,
+            rotation: handleSprite.rotation + 1.0472
+        });
+        gsap.to(handleShadowSprite, {
+            duration: 0.5,
+            rotation: handleShadowSprite.rotation + 1.0472
+        });
+    }
+    function handleIncorrectCombination(){
+        clockwiseRotations = 0;
+        counterclockwiseRotations = 0;
+        step = 0;
+        gsap.to(handleSprite, {
+            yoyo: true,
+            duration: 1,
+            rotation: 15,
+            onComplete: () => {
+                handleSprite.rotation = 0;
+            }
+        });
+        gsap.to(handleShadowSprite, {
+            yoyo: true,
+            duration: 1,
+            rotation: 15,
+            onComplete: () => {
+                handleShadowSprite.rotation = 0;
+            }
+        });
+    }
+
+    function advanceCounterClockwiseStep() {
+        step++;
+        step++;
+        counterclockwiseRotations = 0;
+    }
+
+    function advanceClockwiseStep() {
+        step++;
+        step++;
+        clockwiseRotations = 0;
+    }
+
+    function openDoor() {
+        console.log('💲💲💲💲💲')
+        gsap.to(blinkSpriteOne, {
+            yoyo: true,
+            startAt: {alpha: 0.8},
+            alpha: 1,
+            repeat: -1,
+            ease: "power1.inOut",
+            duration: 0.85
+
+        });
+        gsap.to(blinkSpriteTwo, {
+            yoyo: true,
+            startAt: {alpha: 0.8},
+            alpha: 1,
+            repeat: -1,
+            ease: "power1.inOut",
+            duration: 0.85
+
+        });
+        gsap.to(blinkSpriteThree, {
+            yoyo: true,
+            startAt: {alpha: 0.8},
+            alpha: 1,
+            repeat: -1,
+            ease: "power1.inOut",
+            duration: 0.85
+
+        });
+        app.stage.removeChild(doorSprite);
+        app.stage.removeChild(handleSprite);
+        app.stage.removeChild(handleShadowSprite);
+        doorOpenSprite.alpha = 1;
+        doorShadowSprite.alpha = 1;
+        style.fill = 'green'
+        ticker.stop();
     }
 
     app.renderer.view.canvas.style.position = 'absolute';

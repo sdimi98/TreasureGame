@@ -14,10 +14,14 @@ async function Start() {
     app.renderer.resize(window.innerWidth, window.innerHeight);
 
     document.body.appendChild(app.canvas);
+
+
     let secretCode = generateSecretCode();
+
     let clockwiseRotations = 0;
     let counterclockwiseRotations = 0;
     let step = 0;
+    const ticker = new PIXI.Ticker();
 
     /** Sprites **/
         //Background
@@ -48,14 +52,14 @@ async function Start() {
     doorShadowSprite.position.set(app.renderer.width / 2 * 1.492, app.renderer.height / 2 * 0.988);
     doorShadowSprite.setSize(doorShadowSprite.width * 0.6, doorShadowSprite.height * 0.6);
     app.stage.addChild(doorShadowSprite);
-    doorShadowSprite.alpha=0;
+    doorShadowSprite.alpha = 0;
 
     //doorOpenSprite
     let doorOpenSprite = await createSprite('./assets/doorOpen.png', window.innerWidth, window.innerHeight);
     doorOpenSprite.position.set(app.renderer.width / 2 * 1.46, app.renderer.height / 2 * 0.966);
     doorOpenSprite.setSize(doorOpenSprite.width * 0.6, doorOpenSprite.height * 0.6);
     app.stage.addChild(doorOpenSprite);
-    doorOpenSprite.alpha=0;
+    doorOpenSprite.alpha = 0;
 
     //doorSprite
     let doorSprite = await createSprite('./assets/door.png', window.innerWidth, window.innerHeight);
@@ -95,7 +99,25 @@ async function Start() {
     rightRect.on('pointerdown', () => rotateHandle('right'));
     app.stage.addChild(rightRect);
 
+    const style = new PIXI.TextStyle({
+        fontSize: 23,
+        fill: 'red',
+    });
+    const myText = new PIXI.Text('Hello world!', style);
+    myText.position.set(app.renderer.width / 2 * 0.595, app.renderer.height / 2 * 0.875)
+    app.stage.addChild(myText);
+
     /** Functions **/
+
+    function countSeconds() {
+        ticker.add(delta => {
+            myText.text = `${(performance.now() / 1000).toFixed()}`
+        });
+        ticker.start();
+    }
+
+    countSeconds();
+
 
     function generateSecretCode() {
         let combination = [];
@@ -177,29 +199,29 @@ async function Start() {
             console.log('💲💲💲💲💲')
             gsap.to(blinkSpriteOne, {
                 yoyo: true,
-                startAt: {alpha:0.85},
+                startAt: {alpha: 0.8},
                 alpha: 1,
                 repeat: -1,
                 ease: "power1.inOut",
-                duration:0.9
+                duration: 0.85
 
             });
             gsap.to(blinkSpriteTwo, {
                 yoyo: true,
-                startAt: {alpha:0.85},
+                startAt: {alpha: 0.8},
                 alpha: 1,
                 repeat: -1,
                 ease: "power1.inOut",
-                duration:1
+                duration: 0.85
 
             });
             gsap.to(blinkSpriteThree, {
                 yoyo: true,
-                startAt: {alpha:0.85},
+                startAt: {alpha: 0.8},
                 alpha: 1,
                 repeat: -1,
                 ease: "power1.inOut",
-                duration:1.1
+                duration: 0.85
 
             });
             app.stage.removeChild(doorSprite);
@@ -207,9 +229,10 @@ async function Start() {
             app.stage.removeChild(handleShadowSprite);
             doorOpenSprite.alpha = 1;
             doorShadowSprite.alpha = 1;
+            style.fill = 'green'
+            ticker.stop();
         }
     }
-
 
     app.renderer.view.canvas.style.position = 'absolute';
 

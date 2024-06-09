@@ -49,35 +49,38 @@ async function Start() {
 
     //doorShadowSprite
     let doorShadowSprite = await createSprite('./assets/doorOpenShadow.png', window.innerWidth, window.innerHeight);
-    doorShadowSprite.position.set(app.renderer.width / 2 * 1.492, app.renderer.height / 2 * 0.988);
-    doorShadowSprite.setSize(doorShadowSprite.width * 0.6, doorShadowSprite.height * 0.6);
+    doorShadowSprite.position.set(app.renderer.width / 2 * 1.492, app.renderer.height / 2 * 0.998);
+    doorShadowSprite.setSize(bgSprite.width * 0.21, bgSprite.height * 0.58);
     app.stage.addChild(doorShadowSprite);
     doorShadowSprite.alpha = 0;
 
     //doorOpenSprite
     let doorOpenSprite = await createSprite('./assets/doorOpen.png', window.innerWidth, window.innerHeight);
     doorOpenSprite.position.set(app.renderer.width / 2 * 1.46, app.renderer.height / 2 * 0.966);
-    doorOpenSprite.setSize(doorOpenSprite.width * 0.6, doorOpenSprite.height * 0.6);
+    doorOpenSprite.setSize(bgSprite.width * 0.2, bgSprite.height * 0.58);
     app.stage.addChild(doorOpenSprite);
     doorOpenSprite.alpha = 0;
 
     //doorSprite
     let doorSprite = await createSprite('./assets/door.png', window.innerWidth, window.innerHeight);
-    doorSprite.position.set(app.renderer.width / 2 * 1.01, app.renderer.height / 2 * 0.96);
-    doorSprite.setSize(doorSprite.width * 0.6, doorSprite.height * 0.6);
+    doorSprite.position.set(app.renderer.width / 2 * 1.02, app.renderer.height / 2 * 0.97);
+    doorSprite.setSize(bgSprite.width * 0.33, bgSprite.height * 0.6);
     app.stage.addChild(doorSprite);
+    doorSprite.alpha = 1;
 
     //handleShadow
     let handleShadowSprite = await createSprite('./assets/handleShadow.png', window.innerWidth, window.innerHeight);
     handleShadowSprite.position.set((doorSprite.position.x * 0.977), (doorSprite.position.y * 1.01));
-    handleShadowSprite.setSize(handleShadowSprite.width * 0.24, handleShadowSprite.height * 0.24)
+    handleShadowSprite.setSize(bgSprite.width * 0.11, bgSprite.height * 0.24)
     app.stage.addChild(handleShadowSprite);
+    handleShadowSprite.alpha = 1;
 
     //handleSprite
     let handleSprite = await createSprite('./assets/handle.png', window.innerWidth, window.innerHeight);
     handleSprite.position.set(doorSprite.position.x * 0.97, doorSprite.position.y * 0.989);
-    handleSprite.setSize(handleSprite.width * 0.24, handleSprite.height * 0.24);
+    handleSprite.setSize(bgSprite.width * 0.11, bgSprite.height * 0.24);
     app.stage.addChild(handleSprite);
+    handleSprite.alpha = 1;
 
     //leftRect
     const leftRect = new PIXI.Graphics();
@@ -99,25 +102,26 @@ async function Start() {
     rightRect.on('pointerdown', () => rotateHandle('right'));
     app.stage.addChild(rightRect);
 
+    //counterText
     const style = new PIXI.TextStyle({
         fontSize: 23,
         fill: 'red',
     });
-    const myText = new PIXI.Text('Hello world!', style);
-    myText.position.set(app.renderer.width / 2 * 0.595, app.renderer.height / 2 * 0.875)
-    app.stage.addChild(myText);
+    const counterText = new PIXI.Text('Hello world!', style);
+    counterText.position.set((app.renderer.width / 2) * 0.592, (app.renderer.height / 2) * 0.875);
+    counterText.setSize(bgSprite.width * 0.05, bgSprite.height * 0.03);
+    app.stage.addChild(counterText);
 
     /** Functions **/
 
     function countSeconds() {
         ticker.add(delta => {
-            myText.text = `${(performance.now() / 1000).toFixed()}`
+            counterText.text = `${(performance.now() / 1000).toFixed()}`
         });
         ticker.start();
     }
 
     countSeconds();
-
 
     function generateSecretCode() {
         let combination = [];

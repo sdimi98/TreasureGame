@@ -4,7 +4,7 @@ Start();
 
 async function Start() {
 
-    //Init
+                            /** Init **/
     const app = new PIXI.Application();
     await app.init({
         transparent: false,
@@ -19,32 +19,49 @@ async function Start() {
     let counterclockwiseRotations = 0;
     let step = 0;
 
+                            /** Sprites **/
     //Background
     let bgSprite = await createSprite('./assets/bg.png', window.innerWidth, window.innerHeight);
     bgSprite.position.set(app.renderer.width / 2, app.renderer.height / 2);
     app.stage.addChild(bgSprite);
 
+    //blinkSpriteOne
+    let blinkSpriteOne = await createSprite('./assets/blink.png', window.innerWidth, window.innerHeight);
+    blinkSpriteOne.position.set(app.renderer.width / 2 * 1.05, app.renderer.height / 2 * 1.24);
+    blinkSpriteOne.setSize(blinkSpriteOne.width * 0.15, blinkSpriteOne.height * 0.15);
+    app.stage.addChild(blinkSpriteOne);
 
-    //doorSprite
-    let doorSprite = await createSprite('./assets/door.png', window.innerWidth, window.innerHeight);
-    doorSprite.position.set(app.renderer.width / 2 * 1.01, app.renderer.height / 2 * 0.96);
-    doorSprite.setSize(doorSprite.width * 0.6, doorSprite.height * 0.6);
-    app.stage.addChild(doorSprite);
+    //blinkSpriteTwo
+    let blinkSpriteTwo = await createSprite('./assets/blink.png', window.innerWidth, window.innerHeight);
+    blinkSpriteTwo.position.set(app.renderer.width / 2 * 0.97, app.renderer.height / 2 * 0.98);
+    blinkSpriteTwo.setSize(blinkSpriteTwo.width * 0.15, blinkSpriteTwo.height * 0.15);
+    app.stage.addChild(blinkSpriteTwo);
+
+    //blinkSpriteThree
+    let blinkSpriteThree = await createSprite('./assets/blink.png', window.innerWidth, window.innerHeight);
+    blinkSpriteThree.position.set(app.renderer.width / 2 * 0.83, app.renderer.height / 2 * 1);
+    blinkSpriteThree.setSize(blinkSpriteThree.width * 0.15, blinkSpriteThree.height * 0.15);
+    app.stage.addChild(blinkSpriteThree);
 
     //doorOpenShadow
     let doorShadowSprite = await createSprite('./assets/doorOpenShadow.png', window.innerWidth, window.innerHeight);
     doorShadowSprite.position.set(app.renderer.width / 2 * 1.492, app.renderer.height / 2 * 0.988);
     doorShadowSprite.setSize(doorShadowSprite.width * 0.6, doorShadowSprite.height * 0.6);
-    doorShadowSprite.alpha=0;
+    doorShadowSprite.alpha = 0;
     app.stage.addChild(doorShadowSprite);
 
     //doorOpen
     let doorOpenSprite = await createSprite('./assets/doorOpen.png', window.innerWidth, window.innerHeight);
     doorOpenSprite.position.set(app.renderer.width / 2 * 1.46, app.renderer.height / 2 * 0.966);
     doorOpenSprite.setSize(doorOpenSprite.width * 0.6, doorOpenSprite.height * 0.6);
-    doorOpenSprite.alpha=0;
+    doorOpenSprite.alpha = 0;
     app.stage.addChild(doorOpenSprite);
 
+    //doorSprite
+    let doorSprite = await createSprite('./assets/door.png', window.innerWidth, window.innerHeight);
+    doorSprite.position.set(app.renderer.width / 2 * 1.01, app.renderer.height / 2 * 0.96);
+    doorSprite.setSize(doorSprite.width * 0.6, doorSprite.height * 0.6);
+    app.stage.addChild(doorSprite);
 
     //handleShadow
     let handleShadowSprite = await createSprite('./assets/handleShadow.png', window.innerWidth, window.innerHeight);
@@ -60,7 +77,7 @@ async function Start() {
 
     //leftRect
     const leftRect = new PIXI.Graphics();
-    leftRect.fill({color: 0x000000, alpha: 0});
+    leftRect.fill({color: 0xFF0000, alpha: 0});
     leftRect.rect(0, 0, app.renderer.width / 2, app.renderer.height);
     leftRect.position.set(0, 0)
     leftRect.fill();
@@ -70,7 +87,7 @@ async function Start() {
 
     //rightRect
     const rightRect = new PIXI.Graphics();
-    rightRect.fill({color: 0x900000, alpha: 0});
+    rightRect.fill({color: 0xFF0000, alpha: 0});
     rightRect.rect(0, 0, app.renderer.width / 2, app.renderer.height);
     rightRect.position.set(bgSprite.x, 0)
     rightRect.fill();
@@ -78,7 +95,7 @@ async function Start() {
     rightRect.on('pointerdown', () => rotateHandle('right'));
     app.stage.addChild(rightRect);
 
-    //functions
+                                /** Functions **/
 
     function generateSecretCode() {
         let combination = [];
@@ -124,50 +141,46 @@ async function Start() {
                 rotation: handleShadowSprite.rotation + 1.0472
             });
         } else {
-            clockwiseRotations=0;
-            counterclockwiseRotations=0;
-            step=0;
+            clockwiseRotations = 0;
+            counterclockwiseRotations = 0;
+            step = 0;
             gsap.to(handleSprite, {
-                yoyo:true,
+                yoyo: true,
                 duration: 1,
                 rotation: 15,
-                onComplete: ()=>{
-                    handleSprite.rotation=0;
+                onComplete: () => {
+                    handleSprite.rotation = 0;
                 }
             });
             gsap.to(handleShadowSprite, {
-                yoyo:true,
+                yoyo: true,
                 duration: 1,
                 rotation: 15,
-                onComplete: ()=>{
-                    handleShadowSprite.rotation=0;
+                onComplete: () => {
+                    handleShadowSprite.rotation = 0;
                 }
             });
-            console.log('owie :(');
         }
 
 
         if (clockwiseRotations === secretCode[step]) {
-            console.log('nice');
-
             step++;
             step++;
             console.log(step);
             clockwiseRotations = 0;
         }
         if (counterclockwiseRotations === secretCode[step]) {
-            console.log('nice');
             step++;
             step++;
             console.log(step);
             counterclockwiseRotations = 0;
         }
-        if (step === 6){
+        if (step === 6) {
             app.stage.removeChild(doorSprite);
             app.stage.removeChild(handleSprite);
             app.stage.removeChild(handleShadowSprite);
-            doorOpenSprite.alpha=1;
-            doorShadowSprite.alpha=1;
+            doorOpenSprite.alpha = 1;
+            doorShadowSprite.alpha = 1;
         }
     }
 

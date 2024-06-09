@@ -4,7 +4,7 @@ Start();
 
 async function Start() {
 
-                            /** Init **/
+    /** Init **/
     const app = new PIXI.Application();
     await app.init({
         transparent: false,
@@ -19,8 +19,8 @@ async function Start() {
     let counterclockwiseRotations = 0;
     let step = 0;
 
-                            /** Sprites **/
-    //Background
+    /** Sprites **/
+        //Background
     let bgSprite = await createSprite('./assets/bg.png', window.innerWidth, window.innerHeight);
     bgSprite.position.set(app.renderer.width / 2, app.renderer.height / 2);
     app.stage.addChild(bgSprite);
@@ -43,19 +43,19 @@ async function Start() {
     blinkSpriteThree.setSize(blinkSpriteThree.width * 0.15, blinkSpriteThree.height * 0.15);
     app.stage.addChild(blinkSpriteThree);
 
-    //doorOpenShadow
+    //doorShadowSprite
     let doorShadowSprite = await createSprite('./assets/doorOpenShadow.png', window.innerWidth, window.innerHeight);
     doorShadowSprite.position.set(app.renderer.width / 2 * 1.492, app.renderer.height / 2 * 0.988);
     doorShadowSprite.setSize(doorShadowSprite.width * 0.6, doorShadowSprite.height * 0.6);
-    doorShadowSprite.alpha = 0;
     app.stage.addChild(doorShadowSprite);
+    doorShadowSprite.alpha=0;
 
-    //doorOpen
+    //doorOpenSprite
     let doorOpenSprite = await createSprite('./assets/doorOpen.png', window.innerWidth, window.innerHeight);
     doorOpenSprite.position.set(app.renderer.width / 2 * 1.46, app.renderer.height / 2 * 0.966);
     doorOpenSprite.setSize(doorOpenSprite.width * 0.6, doorOpenSprite.height * 0.6);
-    doorOpenSprite.alpha = 0;
     app.stage.addChild(doorOpenSprite);
+    doorOpenSprite.alpha=0;
 
     //doorSprite
     let doorSprite = await createSprite('./assets/door.png', window.innerWidth, window.innerHeight);
@@ -95,7 +95,7 @@ async function Start() {
     rightRect.on('pointerdown', () => rotateHandle('right'));
     app.stage.addChild(rightRect);
 
-                                /** Functions **/
+    /** Functions **/
 
     function generateSecretCode() {
         let combination = [];
@@ -166,16 +166,42 @@ async function Start() {
         if (clockwiseRotations === secretCode[step]) {
             step++;
             step++;
-            console.log(step);
             clockwiseRotations = 0;
         }
         if (counterclockwiseRotations === secretCode[step]) {
             step++;
             step++;
-            console.log(step);
             counterclockwiseRotations = 0;
         }
         if (step === 6) {
+            console.log('💲💲💲💲💲')
+            gsap.to(blinkSpriteOne, {
+                yoyo: true,
+                startAt: {alpha:0.85},
+                alpha: 1,
+                repeat: -1,
+                ease: "power1.inOut",
+                duration:0.9
+
+            });
+            gsap.to(blinkSpriteTwo, {
+                yoyo: true,
+                startAt: {alpha:0.85},
+                alpha: 1,
+                repeat: -1,
+                ease: "power1.inOut",
+                duration:1
+
+            });
+            gsap.to(blinkSpriteThree, {
+                yoyo: true,
+                startAt: {alpha:0.85},
+                alpha: 1,
+                repeat: -1,
+                ease: "power1.inOut",
+                duration:1.1
+
+            });
             app.stage.removeChild(doorSprite);
             app.stage.removeChild(handleSprite);
             app.stage.removeChild(handleShadowSprite);

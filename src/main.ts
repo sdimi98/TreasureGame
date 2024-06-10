@@ -9,7 +9,6 @@ async function Start() {
   /** Init **/
   const app = new PIXI.Application();
   await app.init({
-    transparent: false,
     antialias: true,
     resizeTo: window
   });
@@ -258,6 +257,5 @@ async function Start() {
     ticker.stop();
   }
 
-  app.renderer.view.canvas.style.position = "absolute";
 
 }

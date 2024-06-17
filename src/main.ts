@@ -1,8 +1,14 @@
 import gsap from "gsap";
 import * as PIXI from "pixi.js";
-import { createSprite } from "./utils/createSprite";
 import { createText } from "./utils/createText";
 import { Container } from "pixi.js";
+import { DoorClosed } from "./models/DoorClosed";
+import { Background } from "./models/Background";
+import { Blink } from "./models/Blink";
+import { Handle } from "./models/Handle";
+import { HandleShadow } from "./models/HandleShadow";
+import { DoorOpened } from "./models/DoorOpened";
+import { DoorOpenedShadow } from "./models/DoorOpenedShadow";
 
 Start();
 
@@ -25,60 +31,65 @@ async function Start() {
   let step = 0;
   const ticker = new PIXI.Ticker();
   const gameContainer = new Container();
-  let scaleX;
-  let scaleY;
-  let scaleFactor: number;
+  let centerX = app.renderer.width / 2;
+  let centerY = app.renderer.height / 2;
+  let scaleFactor: number = 1;
   app.stage.addChild(gameContainer);
 
   /** Sprites **/
     //Background
-  let bgSprite = await createSprite("./assets/bg.png", window.innerWidth, window.innerHeight);
-  bgSprite.position.set(app.renderer.width / 2, app.renderer.height / 2);
+  let bgSprite = new Background();
+  await bgSprite.loadSprite(scaleFactor);
   scaleFactor = calculateScaleFactor();
+  bgSprite.positionSprite(centerX,centerY,scaleFactor);
   bgSprite.scale.set(scaleFactor);
   gameContainer.addChild(bgSprite);
 
   //blinkSpriteOne
-  let blinkSpriteOne = await createSprite("./assets/blink.png", scaleFactor);
-  blinkSpriteOne.position.set(app.renderer.width / 2 * 1.05, app.renderer.height / 2 * 1.24);
+  let blinkSpriteOne = new Blink(scaleFactor,50,170);
+  blinkSpriteOne.positionSprite(centerX,centerY,scaleFactor);
   gameContainer.addChild(blinkSpriteOne);
 
   //blinkSpriteTwo
-  let blinkSpriteTwo = await createSprite("./assets/blink.png", scaleFactor);
-  blinkSpriteTwo.position.set(app.renderer.width / 2 * 0.97, app.renderer.height / 2 * 0.98);
+  let blinkSpriteTwo = new Blink(scaleFactor,-90,0);
+  blinkSpriteTwo.positionSprite(centerX,centerY,scaleFactor);
   gameContainer.addChild(blinkSpriteTwo);
 
   //blinkSpriteThree
-  let blinkSpriteThree = await createSprite("./assets/blink.png", scaleFactor);
-  blinkSpriteThree.position.set(app.renderer.width / 2 * 0.83, app.renderer.height / 2 * 1);
+  let blinkSpriteThree = new Blink(scaleFactor,-480,-50);
+  blinkSpriteThree.positionSprite(centerX,centerY,scaleFactor);
   gameContainer.addChild(blinkSpriteThree);
 
   //doorShadowSprite
-  let doorShadowSprite = await createSprite("./assets/doorOpenShadow.png", scaleFactor);
-  doorShadowSprite.position.set(app.renderer.width / 2 * 1.492, app.renderer.height / 2 * 0.998);
+  let doorShadowSprite = new DoorOpenedShadow(scaleFactor);
+  doorShadowSprite.positionSprite(centerX,centerY,scaleFactor);
   gameContainer.addChild(doorShadowSprite);
   doorShadowSprite.alpha = 0;
 
   //doorOpenSprite
-  let doorOpenSprite = await createSprite("./assets/doorOpen.png", scaleFactor);
-  doorOpenSprite.position.set(app.renderer.width / 2 * 1.46, app.renderer.height / 2 * 0.966);
+  let doorOpenSprite = new DoorOpened(scaleFactor);
+  doorOpenSprite.positionSprite(centerX,centerY,scaleFactor);
   gameContainer.addChild(doorOpenSprite);
   doorOpenSprite.alpha = 0;
 
   //doorSprite
-  let doorSprite = await createSprite("./assets/door.png", scaleFactor);
-  doorSprite.position.set(app.renderer.width / 2 * 1.02, app.renderer.height / 2 * 0.97);
+  const doorSprite = new DoorClosed(scaleFactor);
+  await doorSprite.loadSprite(scaleFactor);
+  doorSprite.positionSprite(centerX,centerY,scaleFactor);
   gameContainer.addChild(doorSprite);
+  doorSprite.alpha=1;
 
   //handleShadow
-  let handleShadowSprite = await createSprite("./assets/handleShadow.png", scaleFactor);
-  handleShadowSprite.position.set((doorSprite.position.x * 0.977), (doorSprite.position.y * 1.01));
+  let handleShadowSprite = new HandleShadow(scaleFactor);
+  handleShadowSprite.positionSprite(doorSprite.position.x,doorSprite.position.y,scaleFactor);
   gameContainer.addChild(handleShadowSprite);
+  handleShadowSprite.alpha=1;
 
   //handleSprite
-  let handleSprite = await createSprite("./assets/handle.png", scaleFactor);
-  handleSprite.position.set(doorSprite.position.x * 0.97, doorSprite.position.y * 0.989);
+  let handleSprite = new Handle(scaleFactor);
+  handleSprite.positionSprite(doorSprite.position.x,doorSprite.position.y,scaleFactor);
   gameContainer.addChild(handleSprite);
+  handleSprite.alpha=1;
 
   //leftRect
   const leftRect = new PIXI.Graphics();
@@ -114,6 +125,8 @@ async function Start() {
 
   window.onresize = () => {
     app.renderer.resize(window.innerWidth, window.innerHeight);
+    centerX=app.renderer.width / 2;
+    centerY=app.renderer.height / 2;
     scaleFactor = calculateScaleFactor()
     scaleSprites();
     positionSprites();
@@ -133,23 +146,23 @@ async function Start() {
 
   }
   function positionSprites(){
-    bgSprite.position.set(app.renderer.width / 2, app.renderer.height / 2);
-    doorSprite.position.set(app.renderer.width / 2 * 1.02, app.renderer.height / 2 * 0.97);
-    handleSprite.position.set(doorSprite.position.x * 0.97, doorSprite.position.y * 0.989);
-    handleShadowSprite.position.set((doorSprite.position.x * 0.977), (doorSprite.position.y * 1.01));
-    blinkSpriteOne.position.set(app.renderer.width / 2 * 1.05, app.renderer.height / 2 * 1.24);
-    blinkSpriteTwo.position.set(app.renderer.width / 2 * 0.97, app.renderer.height / 2 * 0.98);
-    blinkSpriteThree.position.set(app.renderer.width / 2 * 0.83, app.renderer.height / 2 * 1);
-    doorShadowSprite.position.set(app.renderer.width / 2 * 1.492, app.renderer.height / 2 * 0.998);
-    doorOpenSprite.position.set(app.renderer.width / 2 * 1.46, app.renderer.height / 2 * 0.966);
-    counterTextContainer.position.set((app.renderer.width / 2), (app.renderer.height / 2));
+    bgSprite.positionSprite(centerX,centerY,scaleFactor);
+    doorSprite.positionSprite(centerX,centerY,scaleFactor);
+    handleSprite.positionSprite(doorSprite.position.x,doorSprite.position.y,scaleFactor);
+    handleShadowSprite.positionSprite(doorSprite.position.x,doorSprite.position.y,scaleFactor);
+    blinkSpriteOne.positionSprite(centerX,centerY,scaleFactor);
+    blinkSpriteTwo.positionSprite(centerX,centerY,scaleFactor);
+    blinkSpriteThree.positionSprite(centerX,centerY,scaleFactor);
+    doorShadowSprite.positionSprite(centerX,centerY,scaleFactor);
+    doorOpenSprite.positionSprite(centerX,centerY,scaleFactor);
+    counterTextContainer.position.set(centerX, centerY);
 
 
   }
   function calculateScaleFactor(){
-    scaleX = window.innerWidth / bgSprite.texture.width;
-    scaleY = window.innerHeight / bgSprite.texture.height;
-   return scaleFactor = Math.max(scaleX, scaleY);
+   let scaleX = window.innerWidth / bgSprite.texture.width;
+    let scaleY = window.innerHeight / bgSprite.texture.height;
+   return scaleFactor = Math.min(scaleX, scaleY);
   }
 
 
@@ -265,16 +278,16 @@ async function Start() {
     console.log("💲💲💲💲💲");
     gsap.to(blinkSpriteOne, {
       yoyo: true,
-      startAt: { alpha: 0.8 },
+      startAt: { alpha: 0.65 },
       alpha: 1,
       repeat: -1,
       ease: "power1.inOut",
-      duration: 0.85
+      duration: 0.95
 
     });
     gsap.to(blinkSpriteTwo, {
       yoyo: true,
-      startAt: { alpha: 0.8 },
+      startAt: { alpha: 0.6 },
       alpha: 1,
       repeat: -1,
       ease: "power1.inOut",
@@ -283,11 +296,11 @@ async function Start() {
     });
     gsap.to(blinkSpriteThree, {
       yoyo: true,
-      startAt: { alpha: 0.8 },
+      startAt: { alpha: 0.55 },
       alpha: 1,
       repeat: -1,
       ease: "power1.inOut",
-      duration: 0.85
+      duration: 0.75
 
     });
     gameContainer.removeChild(doorSprite);
